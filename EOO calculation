@@ -1,0 +1,31 @@
+# Install and load required packages
+if (!require("sf")) install.packages("sf")
+if (!require("dplyr")) install.packages("dplyr")
+library(sf)
+library(dplyr)
+
+# Vector of shapefile names
+shapefiles <- c("file1.shp", "file2.shp", "...") # Replace with actual filenames
+
+# Function to calculate the area of the convex hull for a shapefile
+calculate_convex_hull_area <- function(shp_file) {
+  # Read the shapefile
+  shp_data <- st_read(shp_file, quiet = TRUE)
+  
+  # Calculate convex hull
+  convex_hull <- st_convex_hull(shp_data)
+
+  # Calculate area in square kilometers
+  area_sq_km <- st_area(convex_hull) / 1000000
+
+  return(area_sq_km)
+}
+
+# Apply the function to each shapefile and store results in a dataframe
+results <- data.frame(
+  FileName = shapefiles,
+  AreaSqKm = sapply(shapefiles, calculate_convex_hull_area)
+)
+
+# View the results
+print(results)
