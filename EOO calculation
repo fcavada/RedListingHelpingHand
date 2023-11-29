@@ -29,3 +29,42 @@ results <- data.frame(
 
 # View the results
 print(results)
+
+
+##################################################################################
+##################################################################################
+##############  USING redlistr PACKAGE ###########################################
+
+# Install and load required packages
+if (!require("sf")) install.packages("sf")
+if (!require("redlistr")) install.packages("redlistr")
+library(sf)
+library(redlistr)
+
+# Vector of shapefile names
+shapefiles <- c("file1.shp", "file2.shp", "...") # Replace with actual filenames
+
+# Function to calculate EOO using redlistr
+calculate_EOO <- function(shp_file) {
+  # Read the shapefile
+  shp_data <- st_read(shp_file, quiet = TRUE)
+
+  # Convert to SpatialPointsDataFrame if not already
+  if (!inherits(shp_data, "Spatial")) {
+    shp_data <- as(shp_data, "Spatial")
+  }
+
+  # Calculate EOO
+  eoo <- EOO(shp_data)$EOO
+
+  return(eoo)
+}
+
+# Apply the function to each shapefile and store results in a dataframe
+results <- data.frame(
+  FileName = shapefiles,
+  EOO = sapply(shapefiles, calculate_EOO)
+)
+
+# View the results
+print(results)
